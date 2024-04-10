@@ -1,6 +1,6 @@
 <?php
 
-namespace WrkLst\Pulse\RemoteServer\Recorders;
+namespace Asd\Pulse\RemoteServer\Recorders;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Str;
