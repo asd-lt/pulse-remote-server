@@ -42,6 +42,21 @@ Don't forget to run [the `pulse:check` command](https://laravel.com/docs/10.x/pu
 - `server_name`: Specify the name of the server as it should appear in the server stats.
 - `server_ssh`: Enter the SSH command to connect to the server (`ssh user@ipaddress`). You can also include options like `-p 2222` for non-standard ports.
 - `query_interval`: Define the interval for querying the remote server's stats, in seconds.
+  - accepts array of intervals for each pulse server. Server name as key and interval as value.
+  ```php
+    'query_interval' => [
+        'pulse-server-1' => 15,
+        'pulse-server-2' => 30,
+    ],
+    ```
+- `query_times`: Define the time`s second for querying the remote server's stats
+    - accepts array of times for each pulse server. Server name as key and time`s second as value.
+  ```php
+    'query_times' => [
+        'pulse-server-1' => 0,
+        'pulse-server-2' => 30,
+    ],
+    ```
 - `directories`: Specify the directories to check for used and available disk capacity. By default, this is set to "/", but you can add multiple directories or change the directory. Note that altering this configuration might impact query performance. For specialized setups, consider forking the repository and adjusting the shell script accordingly.
 - `disabled`: Set to `true` to disable the server recorder.
 
