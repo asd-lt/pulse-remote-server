@@ -1,5 +1,5 @@
 {
-    "name": "wrklst/pulse-remote-server",
+    "name": "asd-lt/pulse-remote-server",
     "description": "A Laravel Pulse Recorder for Remote Servers",
     "keywords": ["laravel", "remote", "server"],
     "type": "library",
@@ -8,6 +8,10 @@
         {
             "name": "Tobias Vielmetter-Diekmann",
             "email": "tobias@wrklst.art"
+        },
+        {
+            "name": "Simonas Dimavičius",
+            "email": "asd@asd.lt"
         }
     ],
     "require": {
@@ -17,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "WrkLst\\Pulse\\RemoteServer\\": "src/"
+            "Asd\\Pulse\\RemoteServer\\": "src/"
         }
     }
 }
