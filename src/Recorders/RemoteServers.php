@@ -24,9 +24,10 @@ class RemoteServers
      * Create a new recorder instance.
      */
     public function __construct(
-        protected Pulse $pulse,
+        protected Pulse      $pulse,
         protected Repository $config
-    ) {
+    )
+    {
         //
     }
 
@@ -35,15 +36,22 @@ class RemoteServers
      */
     public function record(SharedBeat $event): void
     {
-        $query_interval = intval($this->config->get('pulse.recorders.' . self::class . '.query_interval'));
-        $query_interval = $query_interval?$query_interval:15;
+        $servers = $this->config->get('pulse.recorders.' . self::class);
+        foreach ($servers as $serverConfig) {
+            $this->recordServer($event, $serverConfig);
+        }
+    }
+
+    public function recordServer(SharedBeat $event, array $serverConfig)
+    {
+        $query_interval = (int)($serverConfig['query_interval'] ?? 15);
 
         if ($event->time->second % $query_interval !== 0) {
             return;
         }
 
-        $remote_ssh = $this->config->get('pulse.recorders.' . self::class . '.server_ssh');
-        $server = $this->config->get('pulse.recorders.' . self::class . '.server_name');
+        $remote_ssh = $serverConfig['server_ssh'];
+        $server = $serverConfig['server_name'];
         $slug = Str::slug($server);
 
         $dir = dirname(__FILE__);
@@ -68,35 +76,35 @@ class RemoteServers
         [4] 473695292
         */
 
-        $memoryTotal = intval($remoteServerStats[0] / 1024);
-        $memoryUsed = $memoryTotal - intval($remoteServerStats[1] / 1024);
-        $cpu = (int) $remoteServerStats[2];
+        $memoryTotal = (int)($remoteServerStats[0] / 1024);
+        $memoryUsed = $memoryTotal - (int)($remoteServerStats[1] / 1024);
+        $cpu = (int)$remoteServerStats[2];
 
-        $storageDirectories = $this->config->get('pulse.recorders.' . self::class . '.directories');
+        $storageDirectories = $serverConfig['directories'];
 
         if (count($storageDirectories) == 1 && $storageDirectories[0] == "/") {
             $storage = [collect([
                 'directory' => "/",
-                'total' => (round((intval($remoteServerStats[3]) +  intval($remoteServerStats[4])) / 1024)), // MB
-                'used' => (round(intval($remoteServerStats[3]) / 1024)), // MB
+                'total' => (round(((int)$remoteServerStats[3] + (int)$remoteServerStats[4]) / 1024)), // MB
+                'used' => (round((int)$remoteServerStats[3] / 1024)), // MB
             ])];
         } else {
             $storage = collect($storageDirectories)
                 ->map(function (string $directory) use ($remote_ssh, $remoteServerStats) {
-                    if($directory=="/") {
-                        $storageTotal = intval($remoteServerStats[3]) +  intval($remoteServerStats[4]); // used and availble
-                        $storageUsed = intval($remoteServerStats[3]); // used
+                    if ($directory == "/") {
+                        $storageTotal = (int)$remoteServerStats[3] + (int)$remoteServerStats[4]; // used and availble
+                        $storageUsed = (int)$remoteServerStats[3]; // used
                     } else {
                         $storage = match (PHP_OS_FAMILY) {
                             'Darwin' => (`$remote_ssh 'df $directory' | awk 'NR==2 {print $3 "\n" $4 }'`),
                             'Linux' => (`$remote_ssh 'df $directory' | awk 'NR==2 {print $3 "\n" $4 }'`),
                             default => throw new RuntimeException('The pulse:check command does not currently support ' . PHP_OS_FAMILY),
                         };
-                        $storage = explode("\n", $storage); // break in lines                    
-                        $storageTotal = intval($storage[0]) + intval($storage[1]); // used and availble
-                        $storageUsed = intval($storage[0]); // used
+                        $storage = explode("\n", $storage); // break in lines
+                        $storageTotal = (int)$storage[0] + (int)$storage[1]; // used and availble
+                        $storageUsed = (int)$storage[0]; // used
                     }
-                    
+
                     return [
                         'directory' => $directory,
                         'total' => (round($storageTotal / 1024)), // MB
