@@ -54,7 +54,7 @@ class RemoteServers
 
             if (is_array($queryInterval)) {
                 $queryInterval = $queryInterval[gethostname()] ?? null;
-                if ($queryInterval === null && $event->time->second % $queryInterval !== 0) {
+                if ($queryInterval === null || $event->time->second % $queryInterval !== 0) {
                     return;
                 }
             } else if ($event->time->second % $queryInterval !== 0) {
@@ -67,7 +67,7 @@ class RemoteServers
             $queryTimes = $serverConfig['query_times'];
             if (is_array($queryTimes)) {
                 $queryTime = $queryTimes[gethostname()] ?? null;
-                if ($queryTime === null && $event->time->second !== (int)$queryTime) {
+                if ($queryTime === null || $event->time->second !== (int)$queryTime) {
                     return;
                 }
             } else if ($event->time->second !== (int)$queryTimes) {
