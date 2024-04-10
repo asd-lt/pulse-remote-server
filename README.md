@@ -7,7 +7,7 @@ Enhance your server stats by adding multiple remote Linux servers to the mix. Th
 Begin by installing the package via Composer:
 
 ```shell
-composer require asd-lt/pulse-remote-server
+composer require asd-lt/pulse-remote-servers
 ```
 
 ## Authentication

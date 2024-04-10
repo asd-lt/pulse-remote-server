@@ -1,5 +1,5 @@
 {
-    "name": "asd-lt/pulse-remote-server",
+    "name": "asd-lt/pulse-remote-servers",
     "description": "A Laravel Pulse Recorder for Remote Servers",
     "keywords": ["laravel", "remote", "server"],
     "type": "library",
