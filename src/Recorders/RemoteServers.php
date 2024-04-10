@@ -38,7 +38,9 @@ class RemoteServers
     {
         $servers = $this->config->get('pulse.recorders.' . self::class);
         foreach ($servers as $serverConfig) {
-            $this->recordServer($event, $serverConfig);
+            if (empty($serverConfig['disabled'])) {
+                $this->recordServer($event, $serverConfig);
+            }
         }
     }
 
