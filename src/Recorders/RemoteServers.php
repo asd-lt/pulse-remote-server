@@ -46,9 +46,36 @@ class RemoteServers
 
     public function recordServer(SharedBeat $event, array $serverConfig)
     {
-        $query_interval = (int)($serverConfig['query_interval'] ?? 15);
+        $foundConfig = false;
 
-        if ($event->time->second % $query_interval !== 0) {
+        if (isset($serverConfig['query_interval'])) {
+            $foundConfig = true;
+            $queryInterval = $serverConfig['query_interval'];
+
+            if (is_array($queryInterval)) {
+                $queryInterval = $queryInterval[gethostname()] ?? null;
+                if ($queryInterval === null && $event->time->second % $queryInterval !== 0) {
+                    return;
+                }
+            } else if ($event->time->second % $queryInterval !== 0) {
+                return;
+            }
+        }
+
+        if (isset($serverConfig['query_times'])) {
+            $foundConfig = true;
+            $queryTimes = $serverConfig['query_times'];
+            if (is_array($queryTimes)) {
+                $queryTime = $queryTimes[gethostname()] ?? null;
+                if ($queryTime === null && $event->time->second !== (int)$queryTime) {
+                    return;
+                }
+            } else if ($event->time->second !== (int)$queryTimes) {
+                return;
+            }
+        }
+
+        if (!$foundConfig) {
             return;
         }
 
