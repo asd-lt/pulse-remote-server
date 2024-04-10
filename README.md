@@ -43,6 +43,7 @@ Don't forget to run [the `pulse:check` command](https://laravel.com/docs/10.x/pu
 - `server_ssh`: Enter the SSH command to connect to the server (`ssh user@ipaddress`). You can also include options like `-p 2222` for non-standard ports.
 - `query_interval`: Define the interval for querying the remote server's stats, in seconds.
 - `directories`: Specify the directories to check for used and available disk capacity. By default, this is set to "/", but you can add multiple directories or change the directory. Note that altering this configuration might impact query performance. For specialized setups, consider forking the repository and adjusting the shell script accordingly.
+- `disabled`: Set to `true` to disable the server recorder.
 
 And that's all there is to it!
 
